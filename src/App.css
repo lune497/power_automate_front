@@ -48,13 +48,17 @@
 .prompt-input {
   flex: 1;
   padding: 0.8rem 1rem;
-  border-radius: 25px;
+  border-radius: 18px;
   border: none;
   font-size: 1.1rem;
   outline: none;
   background: #22242a;
   color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  min-height: 60px;
+  max-height: 200px;
+  resize: vertical;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
 }
 
 .send-btn {
