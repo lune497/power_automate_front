@@ -1,0 +1,40 @@
+.sidebar {
+  width: 280px;
+  background-color: #1e1e2f;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.new-chat-btn {
+  padding: 0.4rem 0.8rem;
+  background-color: #10a37f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.thread-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.thread-item {
+  padding: 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.thread-item:hover, .thread-item.active {
+  background-color: #33334d;
+}
