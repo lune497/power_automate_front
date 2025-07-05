@@ -79,7 +79,14 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages,thread
               <div className="user-message styled-user-message"><strong>Vous :</strong> {msg.prompt}</div>
             )}
             {msg.content && (
-              <div className="ai-message styled-ai-message"><strong>IA :</strong> {msg.content}</div>
+              <div className="ai-message styled-ai-message">
+                <strong>Agent IA :</strong>
+                <div className="formatted-content">
+                  {msg.content.split(/(?<!\d)\.(?!\d)\s*/).map((line, index) => (
+                    <p key={index}>{line.trim()}</p>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         ))}
