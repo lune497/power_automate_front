@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatWindow.css';
 
-const ChatWindow = ({ threadId, messages, loading, error, refreshMessages }) => {
+const ChatWindow = ({ threadId, messages, loading, error, refreshMessages,threadIdInt }) => {
   const [prompt, setPrompt] = useState("");
   const [sending, setSending] = useState(false);
   const [localError, setLocalError] = useState("");
@@ -68,7 +68,7 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages }) => 
   return (
     <div className="chat-window">
       <div className="chat-header">
-        {threadId ? `Fil de discussion #${threadId}` : 'Aucun chat sélectionné'}
+        {threadId ? `Fil de discussion #${threadIdInt}` : 'Aucun chat sélectionné'}
       </div>
 
       <div className="chat-messages">
@@ -76,20 +76,20 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages }) => 
         {messages.map((msg) => (
           <div key={msg.id} className="message">
             {msg.prompt && (
-              <div className="user-message"><strong>Vous :</strong> {msg.prompt}</div>
+              <div className="user-message styled-user-message"><strong>Vous :</strong> {msg.prompt}</div>
             )}
             {msg.content && (
-              <div className="ai-message"><strong>IA :</strong> {msg.content}</div>
+              <div className="ai-message styled-ai-message"><strong>IA :</strong> {msg.content}</div>
             )}
           </div>
         ))}
         {optimisticUserMsg && (
           <div className="message">
-            <div className="user-message"><strong>Vous :</strong> {optimisticUserMsg.prompt}</div>
+            <div className="user-message styled-user-message"><strong>Vous :</strong> {optimisticUserMsg.prompt}</div>
           </div>
         )}
         {waitingForResponse && (
-          <div className="ai-message ai-thinking">
+          <div className="ai-message ai-thinking styled-ai-thinking">
             <span className="thinking-dots">L'IA réfléchit<span className="dot">.</span><span className="dot">.</span><span className="dot">.</span></span>
           </div>
         )}

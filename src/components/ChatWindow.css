@@ -43,6 +43,16 @@
   margin-bottom: 12px;
 }
 
+.styled-user-message {
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  color: #2c3e50;
+  background-color: #ecf0f1;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 5px 0;
+}
+
 .ai-message {
   align-self: center;
   background: #f3f4f6;
@@ -56,6 +66,17 @@
   margin-left: 40px;
   margin-right: 12px;
   margin-top: 12px;
+}
+
+.styled-ai-message {
+  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  color: #0a0a0a;
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 5px 0;
+  border-left: 4px solid #e2d7e6;
 }
 
 .chat-input {
@@ -106,12 +127,17 @@
   border: 1px solid #b6e0fe;
 }
 
+.styled-ai-thinking {
+  font-style: italic;
+  color: #7f8c8d;
+}
+
 .thinking-dots {
   display: inline-block;
 }
 
 .thinking-dots .dot {
-  animation: blink 0.6s infinite both; /* Durée plus rapide */
+  animation: blink 0.3s infinite both; /* Reduce duration to 0.3s for faster animation */
   opacity: 0.5;
 }
 

@@ -9,18 +9,45 @@
 
 .sidebar-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; /* Stack elements vertically */
+  align-items: flex-start; /* Align items to the left */
   margin-bottom: 1rem;
 }
 
 .new-chat-btn {
+  margin-top: 25px;
   padding: 0.4rem 0.8rem;
   background-color: #10a37f;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  align-self: stretch; /* Make the button take full width */
+  margin-bottom: 3.5rem;
+}
+
+.sidebar-header h2 {
+  display: flex;
+  align-items: center; /* Center the icon and text */
+  justify-content: center; /* Center content horizontally */
+  margin: 0; /* Remove default margin */
+}
+
+.sidebar-header h2 svg {
+  margin-right: 0.5rem; /* Add spacing between the icon and text */
+}
+
+.lvdc-text {
+  text-align: center; /* Center LVDC text */
+  margin: 0.2rem 0 0; /* Add a small margin above LVDC */
+  font-weight: bold; /* Match the text style of Assistant IA */
+  color: inherit; /* Inherit the color from the parent */
+  margin-left: 64px;
+}
+
+.sidebar-header p {
+  font-size: 0.9rem; /* Slightly smaller font size for LVDC */
+  color: #ccc; /* Lighter color for LVDC */
 }
 
 .thread-list {

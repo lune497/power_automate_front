@@ -90,6 +90,7 @@ function App() {
       />
       <ChatWindow
         threadId={selectedThread}
+        threadIdInt={selectedThreadId}
         messages={messages}
         loading={loading}
         error={error}
