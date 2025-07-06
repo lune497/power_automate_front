@@ -161,3 +161,56 @@
   white-space: pre-wrap; /* Preserve line breaks */
   margin-top: 0.5rem;
 }
+  
+.user-menu {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 20px; /* Push it to the far right */
+  top: 10px; /* Adjust vertical alignment */
+}
+
+.user-menu .fa-user-circle {
+  cursor: pointer;
+  color: #2c3e50;
+  transition: color 0.3s ease; /* Smooth color transition */
+}
+
+.user-menu .fa-user-circle:hover {
+  color: #10a37f;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  opacity: 0; /* Initially hidden */
+  transform: translateY(-10px); /* Slide up effect */
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transition */
+  list-style: none; /* Remove bullet points */
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-menu.open {
+  opacity: 1; /* Fully visible */
+  transform: translateY(0); /* Slide down into place */
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none; /* Remove underline */
+  color: #2c3e50; /* Neutral text color */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0; /* Subtle hover background */
+}

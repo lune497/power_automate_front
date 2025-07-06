@@ -1,13 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { FaUserCircle } from 'react-icons/fa'; // Import user icon
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './ChatWindow.css';
 
-const ChatWindow = ({ threadId, messages, loading, error, refreshMessages,threadIdInt }) => {
+const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threadIdInt }) => {
   const [prompt, setPrompt] = useState("");
   const [sending, setSending] = useState(false);
   const [localError, setLocalError] = useState("");
   const [waitingForResponse, setWaitingForResponse] = useState(false);
   const [optimisticUserMsg, setOptimisticUserMsg] = useState(null);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate(); // Initialize navigate
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown visibility
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -65,10 +69,47 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages,thread
     }, 4000);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Remove token
+    navigate('/login'); // Redirect to login
+  };
+
   return (
     <div className="chat-window">
       <div className="chat-header">
         {threadId ? `Fil de discussion #${threadIdInt}` : 'Aucun chat sélectionné'}
+        <div className="user-menu" style={{ marginRight: '20px', position: 'relative' }}>
+          <FaUserCircle
+            size={24}
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            style={{ cursor: 'pointer' }}
+          />
+          <ul className={`dropdown-menu ${dropdownOpen ? 'open' : ''}`} style={{
+            position: 'absolute',
+            top: '30px',
+            right: '0',
+            backgroundColor: 'white',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+            zIndex: 1000,
+            listStyleType: 'none',
+            padding: '0',
+            margin: '0'
+          }}>
+            <li
+              className="dropdown-item"
+              onClick={handleLogout}
+              style={{
+                padding: '10px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Déconnexion
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div className="chat-messages">
