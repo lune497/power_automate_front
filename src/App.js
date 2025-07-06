@@ -1,21 +1,28 @@
 // src/App.js
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'; // Updated imports
 import Sidebar from './components/Sidebar';
 import ChatWindow from './components/ChatWindow';
+import Login from './pages/Login';
 import './App.css';
 
 function App() {
   const [threads, setThreads] = useState([]);
-  const [selectedThread, setSelectedThread] = useState(null); // thread.thread_id (string)
-  const [selectedThreadId, setSelectedThreadId] = useState(null); // thread.id (int)
+  const [selectedThread, setSelectedThread] = useState(null);
+  const [selectedThreadId, setSelectedThreadId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const TOKEN = '2080|zxJkgkehsmQDYEXvauut73WozAJuakIgFwwX0UBA0d6b46ad';
+  const navigate = useNavigate(); // Use navigate hook
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    fetchThreads();
-  }, []);
+    if (!token) {
+      navigate('/login'); // Redirect to login if no token
+    } else {
+      fetchThreads();
+    }
+  }, [token, navigate]); // Added missing dependencies
 
   const fetchThreads = async () => {
     try {
@@ -23,7 +30,7 @@ function App() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${TOKEN}`
+          'Authorization': `Bearer ${token}`
         }
       });
       const data = await res.json();
@@ -43,7 +50,7 @@ function App() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${TOKEN}`
+          'Authorization': `Bearer ${token}`
         }
       });
       const data = await res.json();
@@ -81,22 +88,30 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <Sidebar
-        threads={threads}
-        onThreadSelect={(id, thread_id) => handleThreadSelect(id, thread_id)}
-        onNewChat={handleNewChat}
-        selectedThread={selectedThread}
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/"
+        element={
+          <div className="App">
+            <Sidebar
+              threads={threads}
+              onThreadSelect={(id, thread_id) => handleThreadSelect(id, thread_id)}
+              onNewChat={handleNewChat}
+              selectedThread={selectedThread}
+            />
+            <ChatWindow
+              threadId={selectedThread}
+              threadIdInt={selectedThreadId}
+              messages={messages}
+              loading={loading}
+              error={error}
+              refreshMessages={() => handleThreadSelect(selectedThreadId, selectedThread)}
+            />
+          </div>
+        }
       />
-      <ChatWindow
-        threadId={selectedThread}
-        threadIdInt={selectedThreadId}
-        messages={messages}
-        loading={loading}
-        error={error}
-        refreshMessages={() => handleThreadSelect(selectedThreadId, selectedThread)}
-      />
-    </div>
+    </Routes>
   );
 }
 
