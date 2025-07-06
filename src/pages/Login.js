@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Login.css'; // Optional: Add styles for the login page
+import { FaHeadset } from 'react-icons/fa'; // Import headset icon
+import './Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -31,8 +32,11 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <h1>Login</h1>
-      <form onSubmit={handleLogin}>
+      <div className="login-header">
+        <FaHeadset className="login-icon" />
+        <h1>Assistant IA LVDC</h1>
+      </div>
+      <form onSubmit={handleLogin} className="login-form">
         <input
           type="email"
           placeholder="Email"
