@@ -78,9 +78,9 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
     <div className="chat-window">
       <div className="chat-header">
         {threadId ? `Fil de discussion #${threadIdInt}` : 'Aucun chat sélectionné'}
-        <div className="user-menu" style={{ marginRight: '20px', position: 'relative' }}>
+        <div className="user-menu" style={{ marginTop: '17px', marginRight: '115px', position: 'fixed' }}>
           <FaUserCircle
-            size={24}
+            size={30}
             onClick={() => setDropdownOpen(!dropdownOpen)}
             style={{ cursor: 'pointer' }}
           />

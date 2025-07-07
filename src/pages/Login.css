@@ -5,7 +5,7 @@
   justify-content: center;
   height: 100vh;
   /* background: linear-gradient(135deg, #007bff, #6c63ff); Gradient background */
-  background-color: #bdbdbd;
+  background-color: #0f0f0f;
   font-family: 'Roboto', sans-serif; /* Professional font */
   color: #fff;
 }
@@ -29,7 +29,7 @@ h1 {
 }
 
 .login-form {
-  background: #fff;
+  background: #080808;
   padding: 20px 30px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
