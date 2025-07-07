@@ -100,14 +100,14 @@ function App() {
               onNewChat={handleNewChat}
               selectedThread={selectedThread}
             />
-            <ChatWindow
+            {!loading && <ChatWindow
               threadId={selectedThread}
               threadIdInt={selectedThreadId}
               messages={messages}
               loading={loading}
               error={error}
               refreshMessages={() => handleThreadSelect(selectedThreadId, selectedThread)}
-            />
+            />}
           </div>
         }
       />

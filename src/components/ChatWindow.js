@@ -9,6 +9,7 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
   const [localError, setLocalError] = useState("");
   const [waitingForResponse, setWaitingForResponse] = useState(false);
   const [optimisticUserMsg, setOptimisticUserMsg] = useState(null);
+  const [messagesList, setMessagesList] = useState(messages || []);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate(); // Initialize navigate
   const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown visibility
@@ -17,7 +18,7 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, waitingForResponse, optimisticUserMsg]);
+  }, [messagesList, waitingForResponse, optimisticUserMsg]);
 
   const sendMessage = async () => {
     if (!prompt || !threadId) return;
@@ -33,6 +34,7 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
       });
 
       const data = await res.json();
+      console.log("send data",data)
       if (data.success) {
         setPrompt("");
         setWaitingForResponse(true);
@@ -55,7 +57,10 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
         if (!res.ok) throw new Error("Polling échoué");
         const data = await res.json();
         if (data.success && data.messages.length > 0) {
-          refreshMessages(); // Recharge la vraie liste depuis le parent
+          console.log('await for response',data)
+          // refreshMessages(); // Recharge la vraie liste depuis le parent
+          const temporaryId=new Date().getTime()
+          setMessagesList([...messagesList,{id:temporaryId,prompt:prompt,content:data.messages[0]}]) // add last message to initial message list
           setWaitingForResponse(false);
           setOptimisticUserMsg(null);
           clearInterval(intervalId);
@@ -114,7 +119,7 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
 
       <div className="chat-messages">
         {loading && <div className="loader">Chargement...</div>}
-        {messages.map((msg) => (
+        {messagesList.map((msg) => (
           <div key={msg.id} className="message">
             {msg.prompt && (
               <div className="user-message styled-user-message"><strong>Vous :</strong> {msg.prompt}</div>
