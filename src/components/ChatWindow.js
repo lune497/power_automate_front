@@ -55,9 +55,9 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
         if (!res.ok) throw new Error("Polling échoué");
         const data = await res.json();
         if (data.success && data.messages.length > 0) {
-          refreshMessages(); // Recharge la vraie liste depuis le parent
-          setWaitingForResponse(false);
           setOptimisticUserMsg(null);
+          setWaitingForResponse(false);
+          refreshMessages(false); // Recharge la discussion sans loader global
           clearInterval(intervalId);
         }
       } catch (err) {

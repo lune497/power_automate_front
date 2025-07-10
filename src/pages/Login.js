@@ -19,9 +19,15 @@ const Login = () => {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (data.token) {
+      if (data.token && data.user && data.user.id && data.user.name) {
         localStorage.setItem('token', data.token); // Save token to localStorage
+        localStorage.setItem('userId', data.user.id);
+        localStorage.setItem('userName', data.user.name);
         navigate('/'); // Redirect to the main app
+      } else if (data.token) {
+        // fallback si l'API ne retourne pas user
+        localStorage.setItem('token', data.token);
+        navigate('/');
       } else {
         setError('Invalid email or password');
       }

@@ -15,6 +15,7 @@ function App() {
   const [error, setError] = useState("");
   const navigate = useNavigate(); // Use navigate hook
   const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     if (!token) {
@@ -26,7 +27,7 @@ function App() {
 
   const fetchThreads = async () => {
     try {
-      const res = await fetch('https://www.chifaa.sn/Chiffaa_back/graphql?query={threads{id,thread_id}}', {
+      const res = await fetch(`https://www.chifaa.sn/Chiffaa_back/graphql?query={threads(user_id:${userId}){id,thread_id}}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -40,10 +41,10 @@ function App() {
     }
   };
 
-  const handleThreadSelect = async (numericId, stringId) => {
+  const handleThreadSelect = async (numericId, stringId, showLoader = true) => {
     setSelectedThread(stringId);       // pour REST (OpenAI, etc.)
     setSelectedThreadId(numericId);    // pour GraphQL
-    setLoading(true);
+    if (showLoader) setLoading(true);
     setMessages([]); // Vide les messages pour forcer le rafraîchissement visuel
     try {
       const res = await fetch(`https://www.chifaa.sn/Chiffaa_back/graphql?query={messages(thread_id:${numericId}){id,prompt,message_id,content}}`, {
@@ -58,7 +59,7 @@ function App() {
     } catch (err) {
       setError("Erreur lors du chargement des messages : " + err.message);
     }
-    setLoading(false);
+    if (showLoader) setLoading(false);
   };
 
   const handleNewChat = async () => {
@@ -70,14 +71,35 @@ function App() {
       const res = await fetch('https://www.chifaa.sn/Chiffaa_back/api/test/createThread', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({}),
       });
       const data = await res.json();
       if (data.success) {
-        await fetchThreads();
-        setSelectedThread(data.thread_id);
+        // On recharge les threads de l'utilisateur et sélectionne le dernier thread créé
+        const threadsRes = await fetch(`https://www.chifaa.sn/Chiffaa_back/graphql?query={threads(user_id:${userId}){id,thread_id}}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const threadsData = await threadsRes.json();
+        const newThreads = threadsData.data.threads;
+        setThreads(newThreads);
+        // Cherche le thread avec le thread_id retourné par l'API
+        const newThread = newThreads.find(t => t.thread_id === data.thread_id);
+        if (newThread) {
+          setSelectedThread(newThread.thread_id);
+          setSelectedThreadId(newThread.id);
+        } else if (newThreads.length > 0) {
+          // fallback: sélectionne le dernier thread de la liste
+          const lastThread = newThreads[newThreads.length - 1];
+          setSelectedThread(lastThread.thread_id);
+          setSelectedThreadId(lastThread.id);
+        }
       } else {
         setError("Impossible de créer un nouveau chat");
       }
@@ -85,6 +107,11 @@ function App() {
       setError("Erreur lors de la création du thread : " + err.message);
     }
     setLoading(false);
+  };
+
+  // Permet à ChatWindow d'ajouter un message IA à la liste globale
+  const addMessage = (message) => {
+    setMessages(prev => [...prev, message]);
   };
 
   return (
@@ -106,7 +133,8 @@ function App() {
               messages={messages}
               loading={loading}
               error={error}
-              refreshMessages={() => handleThreadSelect(selectedThreadId, selectedThread)}
+              refreshMessages={(showLoader) => handleThreadSelect(selectedThreadId, selectedThread, showLoader)}
+              onAddMessage={addMessage}
             />
           </div>
         }
