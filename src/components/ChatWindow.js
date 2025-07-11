@@ -9,6 +9,8 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
   const [localError, setLocalError] = useState("");
   const [waitingForResponse, setWaitingForResponse] = useState(false);
   const [optimisticUserMsg, setOptimisticUserMsg] = useState(null);
+  const [typewriterMsg, setTypewriterMsg] = useState(null); // Pour l'effet typewriter
+  const [typewriterContent, setTypewriterContent] = useState("");
   const messagesEndRef = useRef(null);
   const navigate = useNavigate(); // Initialize navigate
   const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown visibility
@@ -17,33 +19,50 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, waitingForResponse, optimisticUserMsg]);
+  }, [messages, waitingForResponse, optimisticUserMsg, typewriterContent]);
+
+  // Effet typewriter : affiche la réponse IA lettre par lettre
+  useEffect(() => {
+    if (typewriterMsg && typewriterContent.length < typewriterMsg.length) {
+      const timeout = setTimeout(() => {
+        setTypewriterContent(typewriterMsg.slice(0, typewriterContent.length + 1));
+      }, 18); // Vitesse d'affichage (ms)
+      return () => clearTimeout(timeout);
+    }
+    if (typewriterMsg && typewriterContent.length === typewriterMsg.length) {
+      setTimeout(() => {
+        setTypewriterMsg(null);
+        setTypewriterContent("");
+        refreshMessages(false); // Recharge la discussion pour synchroniser
+      }, 500);
+    }
+  }, [typewriterMsg, typewriterContent, refreshMessages]);
 
   const sendMessage = async () => {
     if (!prompt || !threadId) return;
     setSending(true);
     setLocalError("");
     setOptimisticUserMsg({ prompt }); // Affiche le message utilisateur en attente
-
+    setWaitingForResponse(true); // Affiche immédiatement l'animation IA réfléchit
     try {
       const res = await fetch(`https://www.chifaa.sn/Chiffaa_back/api/test/addMessageToThread`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userMessage: prompt, threadId }),
       });
-
       const data = await res.json();
       if (data.success) {
         setPrompt("");
-        setWaitingForResponse(true);
         pollForResponse();
       } else {
         setLocalError("Erreur lors de l'ajout du message");
         setOptimisticUserMsg(null);
+        setWaitingForResponse(false);
       }
     } catch (err) {
       setLocalError("Erreur d'envoi : " + err.message);
       setOptimisticUserMsg(null);
+      setWaitingForResponse(false);
     }
     setSending(false);
   };
@@ -57,7 +76,8 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
         if (data.success && data.messages.length > 0) {
           setOptimisticUserMsg(null);
           setWaitingForResponse(false);
-          refreshMessages(false); // Recharge la discussion sans loader global
+          setTypewriterMsg(data.messages[0]); // Lance l'effet typewriter
+          setTypewriterContent("");
           clearInterval(intervalId);
         }
       } catch (err) {
@@ -136,9 +156,17 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
             <div className="user-message styled-user-message"><strong>Vous :</strong> {optimisticUserMsg.prompt}</div>
           </div>
         )}
-        {waitingForResponse && (
+        {waitingForResponse && !typewriterMsg && (
           <div className="ai-message ai-thinking styled-ai-thinking">
             <span className="thinking-dots">L'IA réfléchit<span className="dot">.</span><span className="dot">.</span><span className="dot">.</span></span>
+          </div>
+        )}
+        {typewriterMsg && (
+          <div className="ai-message styled-ai-message">
+            <strong>Agent IA :</strong>
+            <div className="formatted-content">
+              {typewriterContent}
+            </div>
           </div>
         )}
         <div ref={messagesEndRef} />
