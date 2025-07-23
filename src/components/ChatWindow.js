@@ -12,6 +12,7 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
   const [typewriterMsg, setTypewriterMsg] = useState(null); // Pour l'effet typewriter
   const [typewriterContent, setTypewriterContent] = useState("");
   const messagesEndRef = useRef(null);
+    const token = localStorage.getItem('token');
   const navigate = useNavigate(); // Initialize navigate
   const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown visibility
 
@@ -47,7 +48,10 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
     try {
       const res = await fetch(`https://www.chifaa.sn/Chiffaa_back/api/test/addMessageToThread`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ userMessage: prompt, threadId }),
       });
       const data = await res.json();
@@ -70,7 +74,15 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
   const pollForResponse = () => {
     const intervalId = setInterval(async () => {
       try {
-        const res = await fetch(`https://www.chifaa.sn/Chiffaa_back/api/test/getFinalResponseAssistant/${threadId}/${prompt}`);
+        console.log("Polling pour la réponse...",threadId,prompt);
+        const res = await fetch(`https://www.chifaa.sn/Chiffaa_back/api/test/getFinalResponseAssistant`, {
+          method: 'POST',
+           headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ prompt: prompt, threadId }),
+        });
         if (!res.ok) throw new Error("Polling échoué");
         const data = await res.json();
         if (data.success && data.messages.length > 0) {
