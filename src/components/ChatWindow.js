@@ -146,7 +146,7 @@ const ChatWindow = ({ threadId, messages, loading, error, refreshMessages, threa
 
       <div className="chat-messages">
         {loading && <div className="loader">Chargement...</div>}
-        {messages.map((msg) => (
+        {messages?.sort((a, b) => a.id - b.id)?.map((msg) => (
           <div key={msg.id} className="message">
             {msg.prompt && (
               <div className="user-message styled-user-message"><strong>Vous :</strong> {msg.prompt}</div>
